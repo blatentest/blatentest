@@ -1,19 +1,13 @@
-let handler = async(m, { isOwner, isAdmin, conn, text, participants, args, command }) => {
-if (!(isAdmin || isOwner)) {
-global.dfail('admin', m, conn)
-throw false
-}//platinum
-let pesan = args.join` `
-let oi = `*👾~الرساله:* ${pesan}`
-let teks = `*منش👾 🌸 جماعي* \n\n ${oi}\n\n*🌿┇الجروب :⇣*\n`
-for (let mem of participants) {
-teks += `*👾↫* @${mem.id.split('@')[0]}\n`}
-teks += `*p l a t i n u m  BOT*\n\n*▌│█║▌║▌║║▌║▌║▌║█*`
-conn.sendMessage(m.chat, { text: teks, mentions: participants.map(a => a.id) }, )
+let handler = async (m, { conn, text, isAdmin, participants}) => {
+	
+    let users = participants.map(u => u.id).filter(v => v !== conn.user.jid)
+    if (!m.quoted) throw `Reply message`
+    conn.sendMessage(m.chat, { forward: m.quoted.fakeObj, mentions: users } )
 }
-handler.help = ['tagall <mesaje>','invocar <mesaje>']
-handler.tags = ['group']
-handler.command = /^(tag|invocar|invocacion|todos|invocación)$/i
+
+handler.help = ['tag']
+handler.tags = ['owner']
+handler.command = /^(totag|tag)$/i
 handler.admin = true
 handler.group = true
 export default handler
