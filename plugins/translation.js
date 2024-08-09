@@ -1,25 +1,12 @@
-
 import translate from '@vitalets/google-translate-api'
 const defaultLang = 'en'
 const tld = 'cn'
 
 let handler = async (m, { args, usedPrefix, command }) => {
     let err = `
-💝 BLATEN BOT 💝
-         Translator
+📌 *Example:*
 
-🔊 ex :
-
-.translate en مرحبا
-.translate en Hello World
-
-List of supported 
-                   languages: 
-
-Plzz visit following link..
-زر هذا الرابط لتعرف جميع اختصارات اللغات 
-
-https://cloud.google.com/translate/docs/languages
+*${usedPrefix + command}* ar hi
 `.trim()
 
     let lang = args[0]
@@ -31,15 +18,27 @@ https://cloud.google.com/translate/docs/languages
     if (!text && m.quoted && m.quoted.text) text = m.quoted.text
 
     try {
-       let result = await translate(text, { to: lang, autoCorrect: true }).catch(_ => null) 
-       m.reply(result.text)
-    } catch (e) {
-        throw err
-    } 
+       // React before starting the translation
+       await m.react('🔄')
 
+       let result = await translate(text, { to: lang, tld: tld, autoCorrect: true }).catch(_ => null) 
+       if (result) {
+           m.reply(result.text)
+           // React after successful translation
+           await m.react('✅')
+       } else {
+           m.reply('Translation failed. Please try again.')
+           // React if the translation failed
+           await m.react('❌')
+       }
+    } catch (e) {
+        m.reply(err)
+        // React in case of an unexpected error
+        await m.react('⚠️')
+    } 
 }
-handler.help = ['trad <leng> <text>']
+handler.help = ['trad <lang> <text>']
 handler.tags = ['tools']
-handler.command = ['tl', 'ترجم']
+handler.command = ['translate', 'tr']
 
 export default handler
