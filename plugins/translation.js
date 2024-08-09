@@ -4,7 +4,7 @@ const tld = 'cn'
 
 let handler = async (m, { args, usedPrefix, command }) => {
     let err = `
-📌 *Example:*
+📌 *مثال:*
 
 *${usedPrefix + command}* ar hi
 `.trim()
@@ -18,27 +18,15 @@ let handler = async (m, { args, usedPrefix, command }) => {
     if (!text && m.quoted && m.quoted.text) text = m.quoted.text
 
     try {
-       // React before starting the translation
-       await m.react('🔄')
-
-       let result = await translate(text, { to: lang, tld: tld, autoCorrect: true }).catch(_ => null) 
-       if (result) {
-           m.reply(result.text)
-           // React after successful translation
-           await m.react('✅')
-       } else {
-           m.reply('Translation failed. Please try again.')
-           // React if the translation failed
-           await m.react('❌')
-       }
+       let result = await translate(text, { to: lang, autoCorrect: true }).catch(_ => null) 
+       m.reply(result.text)
     } catch (e) {
-        m.reply(err)
-        // React in case of an unexpected error
-        await m.react('⚠️')
+        throw err
     } 
+
 }
-handler.help = ['trad <lang> <text>']
+handler.help = ['trad <leng> <text>']
 handler.tags = ['tools']
-handler.command = ['translate', 'tr']
+handler.command = ['ترجمه', 'ترجمة', 'ترجم', 'tr']
 
 export default handler
